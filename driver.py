@@ -15,7 +15,7 @@ class DriverSettings(pydantic.BaseModel):
     i2c_adress: int = 0x60
 
 
-class Driver(pydantic.BaseModel):
+class Driver:
     """the class incapsulate interface of the driver
 
         it uses 2 GPIO keys to control switches of propulsion and steering drivers and 
