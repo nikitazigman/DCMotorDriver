@@ -8,7 +8,7 @@ from driver import Driver
 class DirverTest(unittest.TestCase):
     def setUp(self):
         super().setUp()
-        settings = {
+        self.settings = {
             'forward_pin': 23,
             'backward_pin': 24,
             'adress': 0x60,

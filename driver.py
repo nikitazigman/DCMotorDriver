@@ -6,8 +6,15 @@ import board
 import digitalio
 from Adafruit_MCP4725 import MCP4725
        
+       
 # think about state design pattern [start, forward, backward, stop, killed]
- 
+
+class DriverSettings(pydantic.BaseModel):
+    forward_pin: int
+    backward_pin: int
+    i2c_adress: int = 0x60
+
+
 class Driver(pydantic.BaseModel):
     """the class incapsulate interface of the driver
 
@@ -21,24 +28,19 @@ class Driver(pydantic.BaseModel):
         stop = 3
     
     MAX_VALUE = 4095
-
-    forward_pin: int
-    backward_pin: int
-    i2c_adress: int = 0x60
     
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
-
+    def __init__(self, driver_settings: DriverSettings) -> None:
+               
         self.current_direction = self.Direction.stop
 
-        self.dac = MCP4725(address=self.i2c_adress)
+        self.dac = MCP4725(address=driver_settings.i2c_adress)
         self._send_value(0)
         
-        self.forward_gpio = digitalio.DigitalInOut(board.__dict__[f'D{self.forward_pin}'])
+        self.forward_gpio = digitalio.DigitalInOut(board.__dict__[f'D{driver_settings.forward_pin}'])
         self.forward_gpio.direction = digitalio.Direction.OUTPUT
         self.forward_gpio.value = False
 
-        self.backward_gpio = digitalio.DigitalInOut(board.__dict__[f'D{self.backward_pin}'])
+        self.backward_gpio = digitalio.DigitalInOut(board.__dict__[f'D{driver_settings.backward_pin}'])
         self.backward_gpio.direction = digitalio.Direction.OUTPUT
         self.backward_gpio.value = False
     
