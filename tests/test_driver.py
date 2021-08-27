@@ -2,17 +2,18 @@ import unittest
 
 import pydantic
 
-from driver import Driver
+from driver import Driver, DriverSettings
 
 
 class DirverTest(unittest.TestCase):
     def setUp(self):
         super().setUp()
-        self.settings = {
+        self._settings = {
             'forward_pin': 23,
             'backward_pin': 24,
             'adress': 0x60,
         }
+        self.settings = DriverSettings(self._settings)
     
     def test_can_drive_forward(self):
         driver = Driver(self.settings)
@@ -75,6 +76,6 @@ class DirverTest(unittest.TestCase):
     
     
     def test_cannot_send_wrong_options(self):
-        self.settings['forward_pin'] = 21.5
+        self._settings['forward_pin'] = 21.5
         with self.assertRaises(pydantic.ValidationError):
-            driver = Driver(self.settings)
+            DriverSettings(self._settings)
